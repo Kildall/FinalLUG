@@ -25,9 +25,8 @@ export default {
     },
     createCart: async (req: Request, res: Response) => {
         //Recived item list (items) in body
-        //TODO: Insert items from body to initial cart
         try {
-            const cart = new CartModel()
+            const cart = new CartModel({items: req.body.items})
             await cart.save()
             res.status(200).send(cart)
         } catch (error) {

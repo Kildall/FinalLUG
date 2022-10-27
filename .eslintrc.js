@@ -3,10 +3,12 @@ module.exports = {
     browser: true,
     es2021: true,
   },
-  extends: ["standard-with-typescript", "prettier"],
+  extends: ["standard-with-typescript", "prettier", "eslint:recommended"],
   overrides: [],
   parserOptions: {
     ecmaVersion: "latest",
   },
-  rules: {},
+  rules: {
+    'no-trailing-spaces': "error"
+  },
 };

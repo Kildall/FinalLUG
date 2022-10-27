@@ -1,5 +1,6 @@
 import { Router, Request, Response } from 'express'
 import cartRouter from './cart'
+import itemRouter from './item'
 
 const router = Router()
 
@@ -12,5 +13,6 @@ router.get('/', (req: Request, res: Response) => {
 
 //Rutas de la api
 router.use('/cart', cartRouter)
+router.use('/item', itemRouter)
 
 export default router
