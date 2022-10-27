@@ -7,6 +7,8 @@ import apiRouter from './routes' //La unica ruta de nuestra api (Por convencion)
 
 const app = express() //Iniciamos el server
 
+const port = process.env.PORT || 3000
+
 //Le decimos al server que transforme los bodys (Que se mandan en JSON) de los request en objetos
 app.use(express.json({limit: '10mb'}))
 app.use(express.urlencoded({extended: true}))
@@ -16,9 +18,9 @@ dotenv.config();
 app.use('/api', apiRouter) //Cargamos la unica ruta de nuestra api
 
 //Abrimos el servidor
-app.listen(process.env.PORT, () => {
-    console.log(`Servidor iniciado en el puerto ${process.env.PORT}`)
-}) 
+app.listen(port, () => {
+    console.log(`Servidor iniciado en el puerto ${port}`)
+})
 
 //Conectamos a la Base de Datos
 ConectarDB().then(() => { //Then se ejecuta cuando no arroja error la funcion

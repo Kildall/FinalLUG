@@ -1,7 +1,7 @@
 {
-  "name": "25-10",
-  "version": "1.0.0",
-  "description": "",
+  "name": "final_lug",
+  "version": "0.0.1",
+  "description": "Api para el final de Lenguajes de Ultima Generacion",
   "main": "server.ts",
   "scripts": {
     "dev": "nodemon server.ts",
