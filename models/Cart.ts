@@ -7,16 +7,22 @@ const cartModel = new Schema({
     },
     items: [
         {
-            type:  Schema.Types.ObjectId,
-            ref: 'Item'
+            item: {
+                type:  Schema.Types.ObjectId,
+                ref: 'Item'
+            },
+            amount: Number
         }
     ]
 })
 
-interface Item {
-    name?: String,
-    amount?: number,
-    price: number
+interface CartItem {
+    item: {
+        name: String,
+        amount: number,
+        price: number
+    },
+    amount: number
 }
 
 //Calcular el total
@@ -27,11 +33,12 @@ cartModel.post('save', async (cart) => {
     //Esta interfaz se la pasamos como tipo para exclusivamente la propiedad `items` de nuestro modelo populado, para luego decirle que ese es el campo a popular
     //mongoose mapea las propiedades del modelo referenciado a la interfaz provista.
     //Una vez populado esto, obtenemos un objeto con una propiedad de items populada donde typescript conoce su tipo (https://mongoosejs.com/docs/typescript/populate.html)
-    const doc = await cart.populate<{ items: Item[] }>('items')
-    //Utilizamos map para obtener unicamente un array con los precios de los items del carrito. (https://stackoverflow.com/questions/19590865/from-an-array-of-objects-extract-value-of-a-property-as-array)
-    //Luego utilizamos reduce para obtener el resultado de la suma de los precios (https://stackoverflow.com/questions/1230233/how-to-find-the-sum-of-an-array-of-numbers)
-    cart.total = doc.items.map(item => item.price).reduce((sum, next) => sum + next, 0)
-    console.log(cart.total)
+    const doc = await cart.populate<{ items: CartItem[] }>('items.item')
+
+    cart.total = 0
+    doc.items.forEach((cartItem) => {
+        cart.total += cartItem.item.price * cartItem.amount
+    });
 });
 
 export default model('Cart', cartModel)

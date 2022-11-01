@@ -43,7 +43,7 @@ export default {
         //Received 2 item list (oldItems, newItems) and cartId in params
         //TODO: Update items in cart with new items
     },
-    deleteItemFromCart: async (req: Request, res: Response) => {
+    removeItemFromCart: async (req: Request, res: Response) => {
         //Received item list (items) and cartId in params
         //TODO: Delete items from list from the cart
     },
