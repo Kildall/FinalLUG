@@ -5,6 +5,8 @@ import mongoose from 'mongoose' //Libreria de Mongoose (Base de datos)
 
 import apiRouter from './routes' //La unica ruta de nuestra api (Por convencion)
 
+dotenv.config();
+
 const app = express() //Iniciamos el server
 
 const port = process.env.PORT || 3000
@@ -13,9 +15,8 @@ const port = process.env.PORT || 3000
 app.use(express.json({limit: '10mb'}))
 app.use(express.urlencoded({extended: true}))
 
-dotenv.config();
-
 app.use('/api', apiRouter) //Cargamos la unica ruta de nuestra api
+
 
 //Abrimos el servidor
 app.listen(port, () => {
