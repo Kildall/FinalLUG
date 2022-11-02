@@ -1,6 +1,6 @@
 {
   "name": "final_lug",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Api para el final de Lenguajes de Ultima Generacion",
   "main": "server.ts",
   "scripts": {

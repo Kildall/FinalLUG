@@ -4,6 +4,12 @@ import Cart from '../models/Cart'
 import CartModel from '../models/Cart'
 import item from './item'
 
+interface CartItem {
+    item: Types.ObjectId
+    amount: number
+}
+
+
 export default {
     getCart: async (req: Request, res: Response) => {
         //Recived cartId in params
@@ -55,7 +61,7 @@ export default {
                 return
             }
 
-            req.body.items.forEach((item:Types.ObjectId) => {
+            req.body.items.forEach((item:CartItem) => {
                 cart.items.push(item)
             });
 
@@ -84,7 +90,7 @@ export default {
                 return
             }
 
-            req.body.newItems.forEach((item:Types.ObjectId) => {
+            req.body.newItems.forEach((item:CartItem) => {
                 cart.items.push(item)
             });
 
