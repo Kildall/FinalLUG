@@ -96,7 +96,7 @@ export default {
         }
 
     },
-    deleteItemFromCart: async (req: Request, res: Response) => {
+    removeItemFromCart: async (req: Request, res: Response) => {
         //Received item list (items) and cartId in params
         //TODO: Delete items from list from the cart
 
