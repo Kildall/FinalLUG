@@ -1,5 +1,15 @@
 import { Schema, model, Types } from "mongoose";
-import MongooseStockError from "../types/MongooseStockError";
+const mua = require('mongoose-unique-array')
+
+interface CartItem {
+    item: {
+        _id: Types.ObjectId
+        name: String,
+        stock: number,
+        price: number
+    },
+    amount: number
+}
 
 const cartModel = new Schema({
     total: {
@@ -10,22 +20,17 @@ const cartModel = new Schema({
         {
             item: {
                 type:  Schema.Types.ObjectId,
-                ref: 'Item'
+                ref: 'Item',
+                required: true,
+                unique: true
             },
-            amount: Number
+            amount: { type: Number, default: 1},
         },
+        
     ]
 })
 
-interface CartItem {
-    item: {
-        _id: Types.ObjectId
-        name: String,
-        amount: number,
-        price: number
-    },
-    amount: number
-}
+cartModel.plugin(mua);
 
 //Calcular el total
 //Evento post guardado del documento
@@ -35,24 +40,25 @@ cartModel.post('save', async (cart) => {
     //Esta interfaz se la pasamos como tipo para exclusivamente la propiedad `items` de nuestro modelo populado, para luego decirle que ese es el campo a popular
     //mongoose mapea las propiedades del modelo referenciado a la interfaz provista.
     //Una vez populado esto, obtenemos un objeto con una propiedad de items populada donde typescript conoce su tipo (https://mongoosejs.com/docs/typescript/populate.html)
-    const doc = await cart.populate<{ items: CartItem[] }>('items.item')
-    var error_ocurred = new MongooseStockError([], cart, [])
+    const populatedCart = await cart.populate<{ items: CartItem[] }>('items.item')
+    //Pongo el total en 0 antes de volver a calcularlo
     cart.total = 0
-    for(const cartItem of doc.items){
-        
-        if(cartItem.item.amount < cartItem.amount){
-            cart.items = cart.items.filter(x => x.item?._id !== cartItem.item._id)
-            
-            error_ocurred.ids.push(cartItem.item._id)
-            error_ocurred.messages.push(`El item con id ${cartItem.item._id} no cuenta con stock suficiente.`)
-            continue
+    //Por cada uno de los items populados
+    for(const populatedItem of populatedCart.items){
+        //Obtengo el index del item en el carrito correspondiente a este guardado
+        const itemIndex = cart.items.findIndex(x => x.item._id === populatedItem.item._id)
+        //Si la cantidad que estoy intentando guardar es mayor al stock existente
+        if(populatedItem.amount > populatedItem.item.stock){
+            //Cambiar la cantidad al maximo disponible
+            cart.items[itemIndex].amount = populatedItem.item.stock
+            //Calcular el total
+            cart.total += populatedItem.item.price * cart.items[itemIndex].amount
+            //Guardar los nuevos datos (Recursivo)
+            await cart.save()
         } else {
-            cart.total += cartItem.item.price * cartItem.amount
-        }
-        
+            cart.total += populatedItem.item.price * cart.items[itemIndex].amount
+        }        
     }
-    if(error_ocurred.messages.length > 0)
-        throw error_ocurred
 });
 
 export default model('Cart', cartModel)

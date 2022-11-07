@@ -3,10 +3,10 @@ import cartController from '../../controllers/cart'
 
 const router = Router()
 
+router.get('/', cartController.getCart)
 router.get('/:cartId', cartController.getCart)
 router.post('/create-cart', cartController.createCart)
 router.post('/add-item/:cartId', cartController.addItemToCart)
-router.put('/update-item/:cartId', cartController.updateItemFromCart)
 router.delete('/remove-item/:cartId', cartController.removeItemFromCart)
 router.delete('/delete-cart/:cartId', cartController.deleteCart)
 

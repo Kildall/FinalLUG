@@ -2,8 +2,8 @@ import { Schema, model } from "mongoose";
 
 const itemModel = new Schema({
     name: { type: String, require: true },
-    amount: { type: Number, min: 0 },
-    price: {type: Number, min: 0}
+    stock: { type: Number, min: 0, require: true },
+    price: {type: Number, min: 0, require: true }
 })
 
 export default model('Item', itemModel)

@@ -3,9 +3,10 @@ import itemController from '../../controllers/item'
 
 const router = Router()
 
-router.get('/:itemId', itemController.get)
-router.post('/create-item', itemController.create)
-router.put('/update-item/:itemId', itemController.update)
-router.delete('/delete-item/:itemId', itemController.delete)
+router.get('/', itemController.getItem)
+router.get('/:itemId', itemController.getItem)
+router.post('/create-item', itemController.createItem)
+router.put('/update-item/:itemId', itemController.updateItem)
+router.delete('/delete-item/:itemId', itemController.deleteItem)
 
 export default router

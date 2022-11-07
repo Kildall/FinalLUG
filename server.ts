@@ -26,8 +26,9 @@ app.listen(port, () => {
 //Conectamos a la Base de Datos
 ConectarDB().then(() => { //Then se ejecuta cuando no arroja error la funcion
     console.log('Se ha conectado a la base de datos.')
-}).catch(()=>{ //Catch se ejecuta cuando la funcion arroja un error
+}).catch((err: any)=>{ //Catch se ejecuta cuando la funcion arroja un error
     console.log('Ha ocurrido un error conectandose a la base de datos.')
+    console.log(err.message)
 })
 
 
@@ -35,7 +36,6 @@ async function ConectarDB() { //Funcion asincronica porque es una conexion a una
     if(process.env.MONGOOSE_CONNECTION_STRING){ //Checkeamos si el string de conexion existe
         mongoose.connect(process.env.MONGOOSE_CONNECTION_STRING) //Nos conectamos a la base de datos (Puede arrojar error como por ejemplo si no tenemos internet.)
     } else {
-        console.log('Mongoose Connection String faltante.') //Mandamos el mensaje que no existe el connection string.
-        throw new Error()
+        throw new Error('Mongoose Connection String faltante.')
     }
 }

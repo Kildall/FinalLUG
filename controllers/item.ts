@@ -2,32 +2,36 @@ import { Request, Response } from 'express'
 import ItemModel from '../models/Item'
 
 export default {
-    get: async (req: Request, res: Response) => {
-        //Recived itemId in params
-        const { itemId } = req.params
-        if(!itemId){
-            res.status(400).send('itemId invalido.')
-            return
-        }
-        
+    getItem: async (req: Request, res: Response) => {
+        //Params:
+        // - itemId -> ObjectId (Opcional)
         try {
-            const cart = await ItemModel.findById(itemId)
-            if(!cart){
-                res.status(404).send('itemId no encontrado.')
+            const { itemId } = req.params
+            if(!itemId){
+                const items = await ItemModel.find({})
+                res.status(200).send(items)
                 return
+            } else {
+                const item = await ItemModel.findById(itemId)
+                if(!item){
+                    res.status(404).send('Item no encontrado.')
+                    return
+                }
+                res.status(200).send(item)
             }
-            res.status(200).send(cart)
         } catch (error) {
             console.log(error)
             res.status(500).send('Ha ocurrido un error.')
         }
-        
     },
-    create: async (req: Request, res: Response) => {
-        //Recived item in body
-        //TODO: Insert items from body
+    createItem: async (req: Request, res: Response) => {
+        //Body:
+        // - name -> string
+        // - stock -> number
+        // - price -> number
         try {
-            const cart = new ItemModel({...req.body})
+            const { name, stock, price } : { name: String, stock: Number, price: Number} = req.body
+            const cart = new ItemModel({name: name, stock: stock, price: price})
             await cart.save()
             res.status(200).send(cart)
         } catch (error) {
@@ -36,13 +40,50 @@ export default {
         }
     },
 
-    update: async (req: Request, res: Response) => {
-        //Received itemId in params and new item in body
-        //TODO: Update item
+    updateItem: async (req: Request, res: Response) => {
+        //Params:
+        // - cartId -> ObjectId 
+        //Body:
+        // - name -> string
+        // - stock -> number
+        // - price -> number
+        try {
+            const { itemId } = req.params
+            const { name, stock, price } : { name: String, stock: Number, price: Number} = req.body
+            if(!itemId){
+                res.status(400).send('itemId invalido.')
+                return
+            }
+            const item = await ItemModel.findByIdAndUpdate(itemId, { name: name, stock: stock, price: price })
+            if(!item){
+                res.status(404).send('Item no encontrado.')
+                return
+            }
+            res.status(200).send({oldItem: item})
+        } catch (error) {
+            console.log(error)
+            res.status(500).send('Ha ocurrido un error.')
+        }
     },
-    delete: async (req: Request, res: Response) => {
-        //Received itemId in params
-        //TODO: Delete item
+    deleteItem: async (req: Request, res: Response) => {
+        //Params:
+        // - itemId -> ObjectId (Opcional)
+        try {
+            const { itemId } = req.params
+            if(!itemId){
+                res.status(400).send('itemId invalido.')
+                return
+            }
+            const item = await ItemModel.findByIdAndDelete(itemId)
+            if(!item){
+                res.status(404).send('Item no encontrado.')
+                return
+            }
+            res.status(204).send()
+        } catch (error) {
+            console.log(error)
+            res.status(500).send('Ha ocurrido un error.')
+        }
     },
 
 }
