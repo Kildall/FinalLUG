@@ -30,7 +30,7 @@ export default {
         // - stock -> number
         // - price -> number
         try {
-            const { name, stock, price } : { name: String, stock: Number, price: Number} = req.body
+            const { name, stock, price } : { name: string, stock: number, price: number} = req.body
             const cart = new ItemModel({name: name, stock: stock, price: price})
             await cart.save()
             res.status(200).send(cart)
@@ -42,14 +42,14 @@ export default {
 
     updateItem: async (req: Request, res: Response) => {
         //Params:
-        // - cartId -> ObjectId 
+        // - cartId -> ObjectId
         //Body:
         // - name -> string
         // - stock -> number
         // - price -> number
         try {
             const { itemId } = req.params
-            const { name, stock, price } : { name: String, stock: Number, price: Number} = req.body
+            const { name, stock, price } : { name: string, stock: number, price: number} = req.body
             if(!itemId){
                 res.status(400).send('itemId invalido.')
                 return

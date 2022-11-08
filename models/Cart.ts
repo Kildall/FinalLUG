@@ -1,10 +1,11 @@
 import { Schema, model, Types } from "mongoose";
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const mua = require('mongoose-unique-array')
 
 interface CartItem {
     item: {
         _id: Types.ObjectId
-        name: String,
+        name: string,
         stock: number,
         price: number
     },
@@ -26,14 +27,12 @@ const cartModel = new Schema({
             },
             amount: { type: Number, default: 1},
         },
-        
+
     ]
 })
 
 cartModel.plugin(mua);
 
-//Calcular el total
-//Evento post guardado del documento
 cartModel.post('save', async (cart) => {
     //Popular el campo de items ya que solo guardamos las referencias (https://mongoosejs.com/docs/populate.html#population)
     //Debido a que trabajamos con typescript debemos declarar una interfaz que corresponda a las propiedades que deberia tener nuestro modelo populado
@@ -53,11 +52,11 @@ cartModel.post('save', async (cart) => {
             cart.items[itemIndex].amount = populatedItem.item.stock
             //Calcular el total
             cart.total += populatedItem.item.price * cart.items[itemIndex].amount
-            //Guardar los nuevos datos (Recursivo)
+            //Guardar los nuevos datos (Recursivo?)
             await cart.save()
         } else {
             cart.total += populatedItem.item.price * cart.items[itemIndex].amount
-        }        
+        }
     }
 });
 

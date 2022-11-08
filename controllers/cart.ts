@@ -10,7 +10,7 @@ interface CartItem {
 export default {
     getCart: async (req: Request, res: Response) => {
         //Params:
-        // - cartId -> ObjectId (Opcional)
+        // - cartId -> ObjectId as String (Opcional)
         try {
             const { cartId } = req.params
             if(!cartId){
@@ -29,7 +29,7 @@ export default {
             console.log(error)
             res.status(500).send('Ha ocurrido un error.')
         }
-        
+
     },
     createCart: async (req: Request, res: Response) => {
         //Body:
@@ -50,7 +50,7 @@ export default {
     },
     addItemToCart: async (req: Request, res: Response) => {
         //Params:
-        // - cartId -> ObjectId 
+        // - cartId -> ObjectId as String
         //Body:
         // - items -> [CartItem]
         try {
@@ -60,20 +60,20 @@ export default {
                 res.status(400).send('cartId invalido.')
                 return
             }
-            
+
             const cart = await CartModel.findById(cartId)
 
             if(!cart){
                 res.status(404).send('Carrito no encontrado.')
                 return
             }
-            
+
             items.forEach((item) => {
-                let existingItem = cart.items.find(x => x.item == item.item) // Busco el item que estoy intentando agregar
-                if(existingItem){ // Si ya existe en el carrito
-                    cart.items[cart.items.indexOf(existingItem)].amount += item.amount // Sumo las cantidades
-                } else { // Si no existe
-                    cart.items.push(item) //Lo agrego al carrito
+                const existingItemIndex = cart.items.findIndex(x => x.item == item.item)
+                if(existingItemIndex !== -1){
+                    cart.items[existingItemIndex].amount += item.amount
+                } else {
+                    cart.items.push(item)
                 }
             });
 
@@ -90,7 +90,7 @@ export default {
     },
     removeItemFromCart: async (req: Request, res: Response) => {
         //Params:
-        // - cartId -> ObjectId 
+        // - cartId -> ObjectId as String
         //Body:
         // - items -> [CartItem]
         try {
@@ -107,13 +107,13 @@ export default {
             }
 
             items.forEach((item) => {
-                let existingItem = cart.items.find(x => x.item == item.item) // Busco el item que estoy intentando eliminar
-                if(!existingItem) return // Si no existe entonces paso al siguiente
+                const existingItem = cart.items.find(x => x.item == item.item)
+                if(!existingItem) return
 
-                if(existingItem!.amount > item.amount){ // Si la cantidad que hay en el carrito es mayor a la que quiero sacar
-                    cart.items[cart.items.indexOf(existingItem!)].amount -= item.amount // Resto las cantidades
-                } else { // Si no
-                    cart.items.splice(cart.items.indexOf(existingItem!), 1) //Elimino el objeto
+                if(existingItem.amount > item.amount){
+                    cart.items[cart.items.indexOf(existingItem)].amount -= item.amount
+                } else {
+                    cart.items.splice(cart.items.indexOf(existingItem), 1)
                 }
             });
             await cart.save()
@@ -125,7 +125,7 @@ export default {
     },
     deleteCart: async (req: Request, res: Response) => {
         //Params:
-        // - cartId -> ObjectId 
+        // - cartId -> ObjectId as String
         try {
             const { cartId } = req.params
             if(!cartId){
