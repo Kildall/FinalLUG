@@ -1,5 +1,4 @@
 import { Schema, model, Types } from "mongoose";
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const mua = require('mongoose-unique-array')
 
 interface CartItem {

@@ -14,6 +14,8 @@ module.exports = {
     ecmaVersion: "latest",
   },
   rules: {
-    'no-trailing-spaces': "error"
+    'no-trailing-spaces': "error",
+    '@typescript-eslint/no-var-requires': "off",
+    '@typescript-eslint/no-explicit-any': "off"
   },
 };
